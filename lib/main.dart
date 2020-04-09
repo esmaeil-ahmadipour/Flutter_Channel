@@ -36,7 +36,7 @@ class _MyHomePageState extends State<MyHomePage> {
         children: <Widget>[
           MaterialButton(
             padding: EdgeInsets.all(8.0),
-            onPressed: (){},
+            onPressed: ()=> _getBatteryInformation,
             color: Colors.blueAccent[700],
             child: Text(
               "Click Me!",
@@ -53,5 +53,20 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
     );
   }
+  static const batteryChannel = const MethodChannel("battery");
 
+  Future<void> _getBatteryInformation() async{
+    String batteryPercentage;
+
+    try{
+      var result =await batteryChannel.invokeMethod('getBatteryLevel');
+      batteryPercentage = "Battery level at $result %";
+    } on PlatformException catch(e){
+      batteryPercentage = "Failed to get battery level :: ${e.message} %";
+    }
+
+    setState(() {
+      _batteryPercentage=batteryPercentage;
+    });
+  }
 }
